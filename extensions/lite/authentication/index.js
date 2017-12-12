@@ -27,7 +27,7 @@ module.exports = ({ dataLocation, securityConfig }) => {
   // a per-ip cache that logs login attempts
   let attempts = {}
   let lastCleanTimestamp = new Date()
-  const { maxAttempts, resetAfter } = securityConfig
+  const { maxAttempts, resetAfter, enabled } = securityConfig
 
   const attempt = ip => {
     // reset the cache if time elapsed
@@ -41,10 +41,11 @@ module.exports = ({ dataLocation, securityConfig }) => {
 
   const authenticate = (user, password, ip) => {
     if (
-      typeof user === 'string' &&
-      user.toLowerCase() === 'admin' &&
-      typeof password === 'string' &&
-      password === adminPassword
+      !enabled ||
+      (typeof user === 'string' &&
+        user.toLowerCase() === 'admin' &&
+        typeof password === 'string' &&
+        password === adminPassword)
     ) {
       attempts[ip] = 0
       return {
