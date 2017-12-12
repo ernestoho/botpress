@@ -8,6 +8,7 @@ import classnames from 'classnames'
 import ReactSidebar from 'react-sidebar'
 import SidebarHeader from './SidebarHeader'
 import RulesChecker from '+/views/RulesChecker'
+import SelectContent from '~/views/Content/Select'
 
 const style = require('./Sidebar.scss')
 
@@ -131,6 +132,7 @@ class Sidebar extends React.Component {
           {items}
           <li className={emptyClassName} key="empty" />
         </ul>
+        <SelectContent />
       </div>
     )
 

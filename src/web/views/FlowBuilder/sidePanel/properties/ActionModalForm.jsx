@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Modal, Button, Radio, OverlayTrigger, Tooltip, Panel, Well } from 'react-bootstrap'
 import Select from 'react-select'
 import axios from 'axios'
+import _ from 'lodash'
 
 import ParametersTable from './ParametersTable'
 
@@ -137,8 +138,8 @@ export default class ActionModalForm extends Component {
   }
 
   renderSectionMessage() {
-    const handleChange = event => {
-      this.setState({ messageInputValue: event.target.value })
+    const handleChange = item => {
+      this.setState({ messageInputValue: `say #!${item.id}` })
     }
 
     const tooltip = (
@@ -156,14 +157,24 @@ export default class ActionModalForm extends Component {
     return (
       <div>
         <h5>Message {help}:</h5>
-        <div className={style.section}>
+        <div className={`${style.section} input-group`}>
           <input
             type="text"
             name="message"
             placeholder="Message to send"
             value={this.state.messageInputValue}
-            onChange={handleChange}
+            disabled
+            className="form-control"
           />
+          <span className="input-group-btn">
+            <button
+              className="btn btn-default"
+              type="button"
+              onClick={() => window.botpress.pickContent({}, handleChange)}
+            >
+              Pick Content...
+            </button>
+          </span>
         </div>
       </div>
     )
@@ -186,7 +197,7 @@ export default class ActionModalForm extends Component {
     }
 
     return (
-      <Modal animation={false} show={props.show} onHide={onClose}>
+      <Modal animation={false} show={props.show} onHide={onClose} container={document.getElementById('app')}>
         <Modal.Header closeButton>
           <Modal.Title>{this.state.isEdit ? 'Edit' : 'Add new'} action</Modal.Title>
         </Modal.Header>

@@ -35,8 +35,6 @@ export const saveAllFlows = flows => (dispatch, getState) => {
   })
 }
 
-// export const fetchFlowsDefinitions = createAction('FLOWS_DEFINITIONS_FETCH')
-
 export const updateFlow = createAction('FLOWS/FLOW/UPDATE')
 export const renameFlow = createAction('FLOWS/FLOW/RENAME')
 export const createFlow = createAction('FLOWS/CREATE')
@@ -56,6 +54,42 @@ export const flowEditorUndo = createAction('FLOWS/EDITOR/UNDO')
 export const flowEditorRedo = createAction('FLOWS/EDITOR/REDO')
 
 export const setDiagramAction = createAction('FLOWS/FLOW/SET_ACTION')
+
+// Content
+export const receiveContentCategories = createAction('CONTENT/CATEGORIES/RECEIVE')
+export const fetchContentCategories = id => dispatch => {
+  axios.get('/content/categories').then(({ data }) => {
+    dispatch(receiveContentCategories(data))
+  })
+}
+
+export const receiveContentMessages = createAction('CONTENT/MESSAGES/RECEIVE')
+export const fetchContentMessages = ({ id, from, count, searchTerm }) => dispatch => {
+  axios
+    .get(`/content/categories/items`, { params: { categoryId: id, from, count, searchTerm } })
+    .then(({ data }) => dispatch(receiveContentMessages({ id, data })))
+}
+
+export const receiveContentMessagesRecent = createAction('CONTENT/MESSAGES/RECEIVE_RECENT')
+export const fetchContentMessagesRecent = ({ searchTerm }) => dispatch => {
+  axios
+    .get(`/content/categories/items`, { params: { count: 5, searchTerm, orderBy: ['createdOn', 'desc'] } })
+    .then(({ data }) => dispatch(receiveContentMessagesRecent({ data })))
+}
+
+export const receiveContentMessagesCount = createAction('CONTENT/MESSAGES/RECEIVE_COUNT')
+export const fetchContentMessagesCount = () => dispatch => {
+  axios.get(`/content/categories/items/count`).then(data => dispatch(receiveContentMessagesCount(data)))
+}
+
+export const upsertContentMessages = ({ categoryId, formData, modifyId }) => () => {
+  const url = `/content/categories/${categoryId}/items/${modifyId || ''}`
+  return axios.post(url, { formData })
+}
+
+export const deleteContentMessages = data => () => {
+  return axios.post('/content/categories/all/bulk_delete', data)
+}
 
 // License
 export const licenseChanged = createAction('LICENSE/CHANGED')
